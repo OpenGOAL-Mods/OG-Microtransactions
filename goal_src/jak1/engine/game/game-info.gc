@@ -43,6 +43,17 @@
   "ROLL JUMP"
   "JUMP DIVE"
   ))
+  
+;; has the item been purchased? (1=N 0=Y, idk ask himham)
+(define *shop-first-purchase* (new 'static 'array int 1
+  1
+  1
+  1
+  1
+  1
+  1
+  1
+  ))
 
 ;; how much does an item cost
 (define *shop-price* (new 'static 'array int 1
@@ -83,17 +94,6 @@
     (else
       ;; you broke MFer
       (sound-play "caught-eel"))))
-
-;; has the item been purchased? (1=N 0=Y, idk ask himham)
-(define *shop-first-purchase* (new 'static 'array int 1
-  1
-  1
-  1
-  1
-  1
-  1
-  1
-  ))
 
 ;; DECOMP BEGINS
 

@@ -1039,7 +1039,8 @@
 	;; og:preserve-this - High FPS Fix
         (if (and (recently-pressed? x)
                  (not (logtest? (-> self water flags) (water-flags wt09)))
-                 (not (logtest? (-> self state-flags) (state-flags prevent-jump))))
+                 (not (logtest? (-> self state-flags) (state-flags prevent-jump))) 
+                 (zero? (-> *shop-first-purchase* (shop-item-idx jump)))) ;; extra jump check
           (go target-jump (-> *TARGET-bank* jump-height-min) (-> *TARGET-bank* jump-height-max) (the-as surface #f)))
         (if (and (cpad-pressed? (-> self control unknown-cpad-info00 number) circle) (can-feet?)) (go target-attack-air #f))
         (when (can-hands? #f)
