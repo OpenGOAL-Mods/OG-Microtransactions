@@ -559,7 +559,10 @@
        (not (logtest? (-> self water flags) (water-flags wt09)))))
 
 (defbehavior can-jump? target ((arg0 symbol))
-  (and (or (logtest? (-> self control status) (cshape-moving-flags onsurf))
+  (and (zero? (-> *shop-first-purchase* (shop-item-idx jump)))
+       ;; either this isn't for target-wheel-flip, or we've unlocked it
+       (or (!= arg0 'target-wheel-flip) (zero? (-> *shop-first-purchase* (shop-item-idx roll-jump))))
+       (or (logtest? (-> self control status) (cshape-moving-flags onsurf))
            (not (time-elapsed? (-> self control unknown-dword11) (-> *TARGET-bank* ground-timeout)))
            (and (logtest? (-> self control status) (cshape-moving-flags onsurf)) (< 0.866 (-> self control surface-angle))))
        (and (not (logtest? (-> self control unknown-surface01 flags) (surface-flags prevent-jump)))
@@ -567,6 +570,14 @@
             (case arg0
               (('target-wheel-flip) (>= 0.5 (-> self control unknown-float61)))
               (else #t)))))
+
+(defun can-double-jump? ()
+  (zero? (-> *shop-first-purchase* (shop-item-idx double-jump)))
+  )
+
+(defun can-jump-dive? ()
+  (zero? (-> *shop-first-purchase* (shop-item-idx jump-dive)))
+  )
 
 (defbehavior move-legs? target ()
   (!= (-> *cpad-list* cpads (-> self control unknown-cpad-info00 number) stick0-speed) 0.0))
@@ -605,7 +616,8 @@
 (defbehavior can-wheel? target ()
   (and (logtest? (-> self control status) (cshape-moving-flags onsurf))
        (or (not (logtest? (-> self control status) (cshape-moving-flags twall))) (>= 0.7 (-> self control touch-angle)))
-       (and (< (-> self control unknown-float61) 0.7) (not (logtest? (-> self state-flags) (state-flags prevent-duck))))))
+       (and (< (-> self control unknown-float61) 0.7) (not (logtest? (-> self state-flags) (state-flags prevent-duck))))
+       (zero? (-> *shop-first-purchase* (shop-item-idx crouch)))))
 
 (defbehavior can-duck? target ()
   (and (logtest? (-> self control status) (cshape-moving-flags onsurf))
@@ -613,7 +625,8 @@
        (not (logtest? (-> self water flags) (water-flags wt11 wt12)))
        (not (logtest? (-> self state-flags) (state-flags prevent-duck)))
        (or (not (logtest? (-> self water flags) (water-flags wt10)))
-           (< (- (- (-> self control trans y) (- (-> self water base-height) (-> self water wade-height)))) 2457.6))))
+           (< (- (- (-> self control trans y) (- (-> self water base-height) (-> self water wade-height)))) 2457.6))
+       (zero? (-> *shop-first-purchase* (shop-item-idx crouch)))))
 
 (defbehavior can-exit-duck? target ()
   (let ((gp-0 (new 'stack-no-clear 'collide-using-spheres-params)))
@@ -640,7 +653,8 @@
          (or (and (logtest? (-> self state-flags) (state-flags prevent-attack))
                   (or (not (logtest? (-> self state-flags) (state-flags remove-prevents)))
                       (not (and (= (-> self fact eco-type) (pickup-type eco-yellow)) (>= (-> self fact eco-level) 1.0)))))
-             (logtest? (-> self control unknown-surface01 flags) (surface-flags prevent-attacks-during-launch-jump surf08))))
+             (logtest? (-> self control unknown-surface01 flags) (surface-flags prevent-attacks-during-launch-jump surf08)))
+         (nonzero? (-> *shop-first-purchase* (shop-item-idx punch))))
      #f)
     ((and (or (not arg0)
               (and (not (time-elapsed? (-> self control unknown-dword11) (-> *TARGET-bank* ground-timeout)))
@@ -655,7 +669,8 @@
 (defbehavior can-feet? target ()
   (cond
     ((or (logtest? (-> self state-flags) (state-flags prevent-attack))
-         (logtest? (-> self control unknown-surface01 flags) (surface-flags prevent-attacks-during-launch-jump surf09)))
+         (logtest? (-> self control unknown-surface01 flags) (surface-flags prevent-attacks-during-launch-jump surf09))
+         (nonzero? (-> *shop-first-purchase* (shop-item-idx spin-kick))))
      #f)
     ((time-elapsed? (-> *TARGET-bank* attack-timeout) (-> self control unknown-dword33)) #t)
     (else (set-time! (-> self control unknown-dword34)) #f)))

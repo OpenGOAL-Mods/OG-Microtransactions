@@ -199,6 +199,7 @@
    (memcard-volume-music             float)
    (memcard-volume-dialog            float)
    (memcard-vibration?               symbol)
+   (shop-hard?                       symbol)
    )
   (:methods
    (new (symbol type) _type_)
@@ -307,6 +308,7 @@
   (reset-ps2 obj call-handlers)
   (reset-misc obj call-handlers)
   (reset-extra obj call-handlers)
+  (set! (-> obj shop-hard?) #f)
   0)
 
 (defmethod reset-gfx ((obj pc-settings) (call-handlers symbol))

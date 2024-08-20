@@ -547,7 +547,8 @@
             ;; debug
             (("debug-font-scale") (set! (-> obj debug-font-scale) (file-stream-read-float file)))
             (("debug-font-scale-auto?") (set! (-> obj debug-font-scale-auto?) (file-stream-read-symbol file)))
-            (("panic") (when (file-stream-read-symbol file) (reset obj #t) (return #f))))
+            (("panic") (when (file-stream-read-symbol file) (reset obj #t) (return #f)))
+            (("shop-hard?") (set! (-> obj shop-hard?) (file-stream-read-symbol file))))
   0)
 
 (defmethod handle-output-settings ((obj pc-settings) (file file-stream))
@@ -620,6 +621,7 @@
   (format file "  (memcard-volume-music ~f)~%" (-> obj memcard-volume-music))
   (format file "  (memcard-volume-dialog ~f)~%" (-> obj memcard-volume-dialog))
   (format file "  (memcard-vibration? ~A)~%" (-> obj memcard-vibration?))
+  (format file "  (shop-hard? ~A)~%" (-> obj shop-hard?))
   0)
 
 (defmethod write-to-file ((obj pc-settings) (filename string))

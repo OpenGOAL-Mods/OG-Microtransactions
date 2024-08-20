@@ -167,6 +167,12 @@
        (new 'static
             'game-option
             :option-type (game-option-type menu)
+            :name (text-id secrets)
+            :scale #t
+            :param3 (game-option-menu cheats))
+       (new 'static
+            'game-option
+            :option-type (game-option-type menu)
             :name (text-id game-options)
             :scale #t
             :param3 (game-option-menu game-settings))
@@ -200,12 +206,6 @@
             :name (text-id disable-auto-save)
             :scale #t
             :param3 (game-option-menu memcard-disable-auto-save))
-       (new 'static
-            'game-option
-            :option-type (game-option-type menu)
-            :name (text-id secrets)
-            :scale #t
-            :param3 (game-option-menu secrets))
        (new 'static
             'game-option
             :option-type (game-option-type menu)
@@ -870,77 +870,15 @@
        'boxed-array
        :type
        game-option
-       (new 'static
-            'game-option
-            :option-type (game-option-type cheat-toggle)
-            :name (text-id cheat-sidekick-alt)
-            :scale #t
-            :param1 5.0)
-       (new 'static
-            'game-option
-            :option-type (game-option-type cheat-toggle)
-            :name (text-id cheat-big-head)
-            :scale #t
-            :param1 9.0)
-       (new 'static
-            'game-option
-            :option-type (game-option-type cheat-toggle)
-            :name (text-id cheat-small-head)
-            :scale #t
-            :param1 10.0)
-       (new 'static
-            'game-option
-            :option-type (game-option-type cheat-toggle)
-            :name (text-id cheat-big-fist)
-            :scale #t
-            :param1 11.0)
-       (new 'static
-            'game-option
-            :option-type (game-option-type cheat-toggle)
-            :name (text-id cheat-big-head-npc)
-            :scale #t
-            :param1 16.0)
-       (new 'static 'game-option :option-type (game-option-type cheat-toggle) :name (text-id cheat-tunes) :scale #t :param1 6.0)
-       (new 'static 'game-option :option-type (game-option-type cheat-toggle) :name (text-id cheat-sky) :scale #t :param1 7.0)
-       (new 'static
-            'game-option
-            :option-type (game-option-type cheat-toggle)
-            :name (text-id cheat-huge-head)
-            :scale #t
-            :param1 15.0)
-       (new 'static 'game-option :option-type (game-option-type cheat-toggle) :name (text-id cheat-mirror) :scale #t :param1 8.0)
-       (new 'static
-            'game-option
-            :option-type (game-option-type cheat-toggle)
-            :name (text-id cheat-eco-yellow)
-            :scale #t
-            :param1 3.0)
-       (new 'static
-            'game-option
-            :option-type (game-option-type cheat-toggle)
-            :name (text-id cheat-eco-blue)
-            :scale #t
-            :param1 2.0)
-       (new 'static
-            'game-option
-            :option-type (game-option-type cheat-toggle)
-            :name (text-id cheat-eco-red)
-            :scale #t
-            :param1 1.0)
-       (new 'static
-            'game-option
-            :option-type (game-option-type cheat-toggle)
-            :name (text-id cheat-eco-green)
-            :scale #t
-            :param1 0.0)
-       (new 'static 'game-option :option-type (game-option-type cheat-toggle) :name (text-id cheat-invinc) :scale #t :param1 4.0)
-       (new 'static
-            'game-option
-            :option-type (game-option-type cheat-toggle)
-            :name (text-id cheat-no-tex)
-            :scale #t
-            :param1 12.0)
-       (new 'static 'game-option :option-type (game-option-type button) :name (text-id back) :scale #t)))
+        (new 'static 'game-option :option-type (game-option-type on-off) :name (text-id shop-hard) :scale #t)
+        (new 'static 'game-option :option-type (game-option-type button-shop) :scale #t :param1 0.0)
+        (new 'static 'game-option :option-type (game-option-type button-shop) :scale #t :param1 1.0)
+        (new 'static 'game-option :option-type (game-option-type button-shop) :scale #t :param1 2.0)
+        (new 'static 'game-option :option-type (game-option-type button-shop) :scale #t :param1 3.0)
+        (new 'static 'game-option :option-type (game-option-type button-shop) :scale #t :param1 4.0)
+        (new 'static 'game-option :option-type (game-option-type button-shop) :scale #t :param1 5.0)
+        (new 'static 'game-option :option-type (game-option-type button-shop) :scale #t :param1 6.0)
+        (new 'static 'game-option :option-type (game-option-type button) :name (text-id back) :scale #t)))
 
 (define *music-player-options*
   (new 'static
@@ -1971,13 +1909,15 @@
   ;; start off by making them all invalid
   (dotimes (i (progress-screen max))
     (set! (-> *options-remap* i) #f))
-  ;; give cheats
-  (when (task-closed? (game-task finalboss-movies) (task-status need-reminder))
-    (logior! (-> *pc-settings* cheats-known) (pc-cheats sidekick-blue tunes sky big-head small-head big-fist big-head-npc))
-    (when (>= (calculate-completion (the progress #f)) 100.0)
-      (logior! (-> *pc-settings* cheats-known)
-               (pc-cheats invinc eco-blue eco-red eco-green eco-yellow huge-head mirror no-tex))))
+  ;; ;; give cheats
+  ;; (when (task-closed? (game-task finalboss-movies) (task-status need-reminder))
+  ;;   (logior! (-> *pc-settings* cheats-known) (pc-cheats sidekick-blue tunes sky big-head small-head big-fist big-head-npc))
+  ;;   (when (>= (calculate-completion (the progress #f)) 100.0)
+  ;;     (logior! (-> *pc-settings* cheats-known)
+  ;;              (pc-cheats invinc eco-blue eco-red eco-green eco-yellow huge-head mirror no-tex))))
   ;; set up options for each screen
+  (when (>= (calculate-completion (the progress #f)) 0.0)
+    (logior! (-> *pc-settings* cheats-known) (pc-cheats eco-blue eco-red eco-green eco-yellow sidekick-blue invinc tunes sky)))
   (set! (-> *options-remap* (progress-screen settings))
         (if (or *cheat-mode* (nonzero? (-> *pc-settings* cheats-known))) *main-options-secrets* *main-options-pc*))
   (set! (-> *options-remap* (progress-screen game-settings)) *game-options-pc*)
@@ -2096,8 +2036,12 @@
   (set! (-> *sound-options-pc* 0 value-to-modify) (&-> *pc-settings* memcard-volume-sfx))
   (set! (-> *sound-options-pc* 1 value-to-modify) (&-> *pc-settings* memcard-volume-music))
   (set! (-> *sound-options-pc* 2 value-to-modify) (&-> *pc-settings* memcard-volume-dialog))
-  (dotimes (i (1- (-> *cheats* length)))
-    (set! (-> *cheats* i value-to-modify) (&-> *progress-carousell* symbol-backup)))
+  
+  ;; cheats menu overridden as shop
+  (set! (-> *cheats* 0 value-to-modify) (&-> *pc-settings* shop-hard?)) ;; toggle outrag challenge, other shop selection stuff is handled elsewhere
+  ;; (dotimes (i (1- (-> *cheats* length)))
+  ;;   (set! (-> *cheats* i value-to-modify) (&-> *progress-carousell* symbol-backup)))
+  
   ;(set! (-> *sound-options-pc* 3 value-to-modify) (&-> *pc-settings* music-fadein?))
   (set! (-> *progress-carousell* aspect-native-choice) (-> *pc-settings* use-vis?))
   ;; scroll stuff!
@@ -2340,7 +2284,11 @@
                      (-> *progress-state* language-backup)))
               (((game-option-type on-off) (game-option-type normal-inverted))
                (set! (-> (the-as (pointer symbol) (-> options (-> obj option-index) value-to-modify)))
-                     (-> *progress-state* on-off-backup))))
+                     (-> *progress-state* on-off-backup)))
+              (((game-option-type cheat-toggle))
+               (if (-> *progress-state* on-off-backup)
+                   (logior!   (-> *pc-settings* cheats) (ash 1 (the int (-> options (-> obj option-index) param1))))
+                   (logclear! (-> *pc-settings* cheats) (ash 1 (the int (-> options (-> obj option-index) param1)))))))
             ;; ding
             (sound-play "cursor-options")
             (set! (-> obj selected-option) #f))
@@ -2490,6 +2438,9 @@
                  (push! obj)
                  (sound-play "select-option")
                  (set! (-> obj next-display-state) (progress-screen flava-player))))
+              ((= (-> options (-> obj option-index) option-type) (game-option-type button-shop))
+                ;; try to buy thing
+                (buy (the int (-> options (-> obj option-index) param1))))
               ((= (-> options (-> obj option-index) option-type) (game-option-type button-flava))
                ;; set flava
                (when (find-flava-log (progress-get-music-by-index *progress-music*) (the int (-> options (-> obj option-index) param1)))
@@ -2656,14 +2607,9 @@
             (set! (-> obj selected-option) #f)
             (case (-> options (-> obj option-index) option-type)
               (((game-option-type cheat-toggle))
-               (let ((the-cheat (ash 1 (the int (-> options (-> obj option-index) param1)))))
-                 (cond
-                   ((-> (the (pointer symbol) (-> options (-> obj option-index) value-to-modify)))
-                    (logior! (-> *pc-settings* cheats) the-cheat))
-                   (else
-                    (logclear! (-> *pc-settings* cheats) the-cheat)
-                    (when (and *target* (= the-cheat (pc-cheats invinc)))
-                      (logclear! (-> *target* state-flags) (state-flags invulnerable)))))))
+                (if (-> (the (pointer symbol) (-> options (-> obj option-index) value-to-modify)))
+                  (logior!   (-> *pc-settings* cheats) (ash 1 (the int (-> options (-> obj option-index) param1))))
+                  (logclear! (-> *pc-settings* cheats) (ash 1 (the int (-> options (-> obj option-index) param1))))))
               (((game-option-type aspect-ratio))
                ;; aspect ratio is first written to the backup. so this is for applying the change if we went through with it.
                (set! (-> *setting-control* default aspect-ratio)
@@ -2969,6 +2915,10 @@
                (if (and (nonzero? (-> options index name)) (find-music-log (progress-get-music-by-index index)))
                  (set! option-str (lookup-text! *common-text* (-> options index name) #f))
                  (set! option-str locked-str)))
+              (((game-option-type button-shop))
+                (if (nonzero? (-> *shop-first-purchase* (the int (-> options index param1))))
+                  (set! option-str (string-format "BUY ~S FOR ~D ORBS" (-> *shop-item* (the int (-> options index param1))) (get-shop-price (the int (-> options index param1))) ))
+                  (set! option-str (string-format "~S PURCHASED" (-> *shop-item* (the int (-> options index param1)))))))
               (((game-option-type button-flava))
                ;; a button for the flava player. has the text "locked" sometimes!
                (if (and (nonzero? (-> options index name))
@@ -3241,6 +3191,10 @@
                                 ((and (!= index (-> obj option-index)) (or locked? (= locked-str option-str)))
                                  ;; for "locked" options!
                                  (font-color menu-invalid))
+                                ((and (!= index (-> obj option-index))
+                                      (not (-> *setting-control* default auto-save))
+                                      (= (text-id disable-auto-save) (-> options index name)))
+                                 (font-color menu-invalid))
                                 ((and (= index (-> obj option-index)) (not (or (progress-scrolling?) (-> obj in-transition))))
                                  (font-color progress-selected))
                                 (else (font-color default))))
@@ -3385,10 +3339,12 @@
               (progress-screen resolution)
               (progress-screen aspect-ratio)
               (progress-screen secrets)
-              (progress-screen cheats)
               (progress-screen monitor))
              (hide-progress-icons)
              (draw-options self 115 25 0.82))
+            (((progress-screen cheats))
+             (hide-progress-icons)
+             (and (draw-options self 115 25 0.82) (draw-shop-orbs self)))
             (((progress-screen settings) (progress-screen settings-title)) (hide-progress-icons) (draw-options self 115 25 0.78))
             (((progress-screen misc-options)) (hide-progress-icons) (draw-options self 115 25 0.79))
             (((progress-screen music-player)) (hide-progress-icons) (draw-options self 128 21 0.82))

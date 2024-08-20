@@ -156,6 +156,7 @@
      (speaker)
      (aspect-native)
      (button-music)
+     (button-shop)
      (button-flava)
      (cheat-toggle)
      (monitor)
@@ -318,7 +319,8 @@
    (draw-pal-now-60hz (_type_ font-context) none)
    (draw-no-disc (_type_ font-context) none)
    (draw-bad-disc (_type_ font-context) none)
-   (draw-quit (_type_ font-context) none))
+   (draw-quit (_type_ font-context) none)
+   (draw-shop-orbs (_type_) none))
   (:states
    progress-coming-in
    progress-debug

@@ -18,6 +18,83 @@
 
 ;; The "perm" data is saved to the memory card.
 
+;; orb count for purposes of the shop
+(define *shop-count* 0)
+
+(defenum shop-item-idx
+  :type uint8
+  (jump)
+  (double-jump)
+  (punch)
+  (spin-kick)
+  (crouch)
+  (roll-jump)
+  (jump-dive))
+  
+(define *shop-length* 7)
+
+;; item names
+(define *shop-item* (new 'static 'array string 1
+  "JUMP"
+  "DOUBLE JUMP"
+  "PUNCH"
+  "SPIN KICK"
+  "CROUCH"
+  "ROLL JUMP"
+  "JUMP DIVE"
+  ))
+
+;; how much does an item cost
+(define *shop-price* (new 'static 'array int 1
+  6     ;; min  0 max 6
+  40    ;; min 40 max 44
+  100     ;; max 452
+  100     ;; 
+  100
+  100
+  100))
+
+;; how much does an item cost
+(define *shop-price-hard* (new 'static 'array int 1
+  6     ;; min  0 max 6
+  9999    ;; min 40 max 44
+  9999     ;; max 452
+  1462     ;; 
+  9999
+  9999
+  9999))
+
+(defun get-shop-price ((idx int))
+  (if (-> *pc-settings* shop-hard?)
+    (-> *shop-price-hard* idx)
+    (-> *shop-price* idx)))
+
+(defun buy ((idx int))
+  "purchase the item"
+  (cond
+    ((!= (-> *shop-first-purchase* idx) 1)
+      ;; already purchased
+      (sound-play "cursor-options"))
+    ((>= *shop-count* (get-shop-price idx))
+      ;; have the orbs
+      (sound-play "money-pickup")
+      (-! *shop-count* (get-shop-price idx))
+      (set! (-> *shop-first-purchase* idx) 0))
+    (else
+      ;; you broke MFer
+      (sound-play "caught-eel"))))
+
+;; has the item been purchased? (1=N 0=Y, idk ask himham)
+(define *shop-first-purchase* (new 'static 'array int 1
+  1
+  1
+  1
+  1
+  1
+  1
+  1
+  ))
+
 ;; DECOMP BEGINS
 
 (define-extern runs-on-jak-death (function symbol none))
@@ -292,6 +369,7 @@
                ;; if we have all the money in our level, display the all orbs graphic
                (if (= (-> this money-per-level level-idx) (-> (get-game-count level-idx) money-count)) (activate-orb-all level-idx)))))))
      ;; increment our current money count
+     (+! *shop-count* amount)
      (+! (-> this money) amount))
     (('fuel-cell)
      ;; got a power cell!
