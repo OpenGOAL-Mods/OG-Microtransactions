@@ -124,4 +124,13 @@
   (plunger-lurker-hit 113)
   (leaving-misty 114)
   (assistant-village3 115)
-  (max 116))
+  (jump-unlocked? 116)
+  (double-jump-unlocked? 117)
+  (punch-unlocked? 118)
+  (spin-kick-unlocked? 119)
+  (crouch-unlocked? 120)
+  (roll-jump-unlocked? 121)
+  (jump-dive-unlocked? 122)
+  (max 123))
+
+
