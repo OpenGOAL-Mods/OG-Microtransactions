@@ -1175,7 +1175,7 @@
              (s4-0 (-> s3-0 base))
              )
         (let ((s2-0 draw-string-xy))
-          (format (clear *temp-string*) "~D" *shop-count* )
+          (format (clear *temp-string*) "~D" (-> *game-info* money-per-level 25) )
           (s2-0
             *temp-string*
             s3-0

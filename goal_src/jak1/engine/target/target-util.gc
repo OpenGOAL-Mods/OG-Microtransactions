@@ -656,7 +656,7 @@
                   (or (not (logtest? (-> self state-flags) (state-flags remove-prevents)))
                       (not (and (= (-> self fact eco-type) (pickup-type eco-yellow)) (>= (-> self fact eco-level) 1.0)))))
              (logtest? (-> self control unknown-surface01 flags) (surface-flags prevent-attacks-during-launch-jump surf08)))
-         (task-closed? (game-task punch-unlocked?) (task-status need-hint)))
+         (not (task-closed? (game-task punch-unlocked?) (task-status need-hint))))
      #f)
     ((and (or (not arg0)
               (and (not (time-elapsed? (-> self control unknown-dword11) (-> *TARGET-bank* ground-timeout)))
@@ -672,7 +672,7 @@
   (cond
     ((or (logtest? (-> self state-flags) (state-flags prevent-attack))
          (logtest? (-> self control unknown-surface01 flags) (surface-flags prevent-attacks-during-launch-jump surf09))
-         (nonzero? (-> *shop-first-purchase* (shop-item-idx spin-kick))))
+        (task-closed? (game-task spin-kick-unlocked?) (task-status need-hint)))
      #f)
     ((time-elapsed? (-> *TARGET-bank* attack-timeout) (-> self control unknown-dword33)) #t)
     (else (set-time! (-> self control unknown-dword34)) #f)))

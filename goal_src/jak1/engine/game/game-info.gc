@@ -19,7 +19,7 @@
 ;; The "perm" data is saved to the memory card.
 
 ;; orb count for purposes of the shop
-(define *shop-count* 0)
+ ;;(-> *game-info* money-per-level 25)
 
 (defconstant NUM_UNLOCKS 7)
 (deftype microtransaction-item (structure)
@@ -80,61 +80,8 @@
 (set-item-param (-> *microtransaction-info* items 6) "JUMP DIVE" (game-task jump-dive-unlocked?) 100 9999 6)
 )
 
-(defenum shop-item-idx
-  :type uint8
-  (jump)
-  (double-jump)
-  (punch)
-  (spin-kick)
-  (crouch)
-  (roll-jump)
-  (jump-dive))
 
 
-
-(define *shop-length* 7)
-
-;; item names
-(define *shop-item* (new 'static 'array string 1
-  "JUMP"
-  "DOUBLE JUMP"
-  "PUNCH"
-  "SPIN KICK"
-  "CROUCH"
-  "ROLL JUMP"
-  "JUMP DIVE"
-  ))
-
-;; has the item been purchased? (1=N 0=Y, idk ask himham)
-(define *shop-first-purchase* (new 'static 'array int 1
-  1
-  1
-  1
-  1
-  1
-  1
-  1
-  ))
-
-;; how much does an item cost
-(define *shop-price* (new 'static 'array int 1
-  6     ;; min  0 max 6
-  40    ;; min 40 max 44
-  100     ;; max 452
-  100     ;;
-  100
-  100
-  100))
-
-;; how much does an item cost
-(define *shop-price-hard* (new 'static 'array int 1
-  6     ;; min  0 max 6
-  9999    ;; min 40 max 44
-  9999     ;; max 452
-  1462     ;;
-  9999
-  9999
-  9999))
 
 (defun get-shop-price ((item microtransaction-item))
   (if (-> *pc-settings* shop-hard?)
@@ -147,10 +94,10 @@
     ((task-closed? (-> item task) (task-status need-hint))
       ;; already purchased
       (sound-play "cursor-options"))
-    ((>= *shop-count* (get-shop-price item))
+    ((>= (-> *game-info* money-per-level 25) (get-shop-price item))
       ;; have the orbs
       (sound-play "money-pickup")
-      (-! *shop-count* (get-shop-price item))
+      (-! (-> *game-info* money-per-level 25) (get-shop-price item))
       (close-specific-task! (-> item task) (task-status need-hint)))
     (else
       ;; you broke MFer
@@ -430,7 +377,7 @@
                ;; if we have all the money in our level, display the all orbs graphic
                (if (= (-> this money-per-level level-idx) (-> (get-game-count level-idx) money-count)) (activate-orb-all level-idx)))))))
      ;; increment our current money count
-     (+! *shop-count* amount)
+     (+! (-> *game-info* money-per-level 25) amount)
      (+! (-> this money) amount))
     (('fuel-cell)
      ;; got a power cell!
