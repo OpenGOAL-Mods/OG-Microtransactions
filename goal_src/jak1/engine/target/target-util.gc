@@ -572,12 +572,10 @@
               (else #t)))))
 
 (defun can-double-jump? ()
-  (task-closed? (game-task double-jump-unlocked?) (task-status need-hint))
-  )
+  (task-closed? (game-task double-jump-unlocked?) (task-status need-hint)))
 
 (defun can-jump-dive? ()
-  (task-closed? (game-task jump-dive-unlocked?) (task-status need-hint))
-  )
+  (task-closed? (game-task jump-dive-unlocked?) (task-status need-hint)))
 
 (defbehavior move-legs? target ()
   (!= (-> *cpad-list* cpads (-> self control unknown-cpad-info00 number) stick0-speed) 0.0))
@@ -626,9 +624,7 @@
        (not (logtest? (-> self state-flags) (state-flags prevent-duck)))
        (or (not (logtest? (-> self water flags) (water-flags wt10)))
            (< (- (- (-> self control trans y) (- (-> self water base-height) (-> self water wade-height)))) 2457.6))
-
-       (task-closed? (game-task crouch-unlocked?) (task-status need-hint))
-       ))
+       (task-closed? (game-task crouch-unlocked?) (task-status need-hint))))
 
 (defbehavior can-exit-duck? target ()
   (let ((gp-0 (new 'stack-no-clear 'collide-using-spheres-params)))
@@ -672,7 +668,7 @@
   (cond
     ((or (logtest? (-> self state-flags) (state-flags prevent-attack))
          (logtest? (-> self control unknown-surface01 flags) (surface-flags prevent-attacks-during-launch-jump surf09))
-        (task-closed? (game-task spin-kick-unlocked?) (task-status need-hint)))
+         (not (task-closed? (game-task spin-kick-unlocked?) (task-status need-hint))))
      #f)
     ((time-elapsed? (-> *TARGET-bank* attack-timeout) (-> self control unknown-dword33)) #t)
     (else (set-time! (-> self control unknown-dword34)) #f)))

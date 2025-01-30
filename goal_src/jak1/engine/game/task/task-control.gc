@@ -4964,9 +4964,7 @@
                               :condition
                               (lambda :behavior process-taskable ((arg0 task-control))
                                 #t))))
-
-
-                                               (new 'static
+               (new 'static
                     'task-control
                     :current-stage -1
                     :stage
@@ -4997,8 +4995,7 @@
                               :condition
                               (lambda :behavior process-taskable ((arg0 task-control))
                                 #t))))
-
-                                               (new 'static
+               (new 'static
                     'task-control
                     :current-stage -1
                     :stage
@@ -5029,8 +5026,7 @@
                               :condition
                               (lambda :behavior process-taskable ((arg0 task-control))
                                 #t))))
-
-                                               (new 'static
+               (new 'static
                     'task-control
                     :current-stage -1
                     :stage
@@ -5061,8 +5057,7 @@
                               :condition
                               (lambda :behavior process-taskable ((arg0 task-control))
                                 #t))))
-
-                                               (new 'static
+               (new 'static
                     'task-control
                     :current-stage -1
                     :stage
@@ -5093,8 +5088,7 @@
                               :condition
                               (lambda :behavior process-taskable ((arg0 task-control))
                                 #t))))
-
-                                               (new 'static
+               (new 'static
                     'task-control
                     :current-stage -1
                     :stage
@@ -5125,8 +5119,7 @@
                               :condition
                               (lambda :behavior process-taskable ((arg0 task-control))
                                 #t))))
-
-                                               (new 'static
+               (new 'static
                     'task-control
                     :current-stage -1
                     :stage
@@ -5157,8 +5150,7 @@
                               :condition
                               (lambda :behavior process-taskable ((arg0 task-control))
                                 #t))))
-
-                                               (new 'static
+               (new 'static
                     'task-control
                     :current-stage -1
                     :stage
@@ -5188,12 +5180,7 @@
                               :flags (task-flags has-entity)
                               :condition
                               (lambda :behavior process-taskable ((arg0 task-control))
-                                #t))))
-
-
-
-
-                                )))
+                                #t)))))))
 
 (defun task-control-reset ((arg0 symbol))
   "Reset all task controls and set their current stage"

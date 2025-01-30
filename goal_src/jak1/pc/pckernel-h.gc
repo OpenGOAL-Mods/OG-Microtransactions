@@ -199,8 +199,7 @@
    (memcard-volume-music             float)
    (memcard-volume-dialog            float)
    (memcard-vibration?               symbol)
-   (shop-hard?                       symbol)
-   )
+   (shop-hard?                       symbol))
   (:methods
    (new (symbol type) _type_)
    (initialize (_type_) _type_)

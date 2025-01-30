@@ -1036,7 +1036,7 @@
                   :frame-num
                   (ja-aframe (the-as float (if (= arg1 (-> *FACT-bank* eco-full-inc)) 0.0 6.0)) 0))
       (until (ja-done? 0)
-	      ;; og:preserve-this - High FPS Fix
+        ;; og:preserve-this - High FPS Fix
         (if (and (recently-pressed? x)
                  (not (logtest? (-> self water flags) (water-flags wt09)))
                  (not (logtest? (-> self state-flags) (state-flags prevent-jump)))
