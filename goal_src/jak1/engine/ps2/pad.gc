@@ -255,6 +255,7 @@
 
 ;; the four controllers
 (define *cpad-list* (new 'global 'cpad-list))
+
 ;; the cpad-history for each controller
 (define *cpad-history-list* (new 'global 'cpad-history-list))
 

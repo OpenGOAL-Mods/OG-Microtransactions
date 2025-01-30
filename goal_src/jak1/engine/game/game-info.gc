@@ -19,81 +19,68 @@
 ;; The "perm" data is saved to the memory card.
 
 ;; orb count for purposes of the shop
-(define *shop-count* 0)
+;;(-> *game-info* money-per-level 25)
 
-(defenum shop-item-idx
-  :type uint8
-  (jump)
-  (double-jump)
-  (punch)
-  (spin-kick)
-  (crouch)
-  (roll-jump)
-  (jump-dive))
-  
-(define *shop-length* 7)
+(defconstant NUM_UNLOCKS 7)
 
-;; item names
-(define *shop-item* (new 'static 'array string 1
-  "JUMP"
-  "DOUBLE JUMP"
-  "PUNCH"
-  "SPIN KICK"
-  "CROUCH"
-  "ROLL JUMP"
-  "JUMP DIVE"
-  ))
-  
-;; has the item been purchased? (1=N 0=Y, idk ask himham)
-(define *shop-first-purchase* (new 'static 'array int 1
-  1
-  1
-  1
-  1
-  1
-  1
-  1
-  ))
+(deftype microtransaction-item (structure)
+  ((idx        int)
+   (name       string)
+   (task       game-task)
+   (price      uint32)
+   (hard-price uint32)))
 
-;; how much does an item cost
-(define *shop-price* (new 'static 'array int 1
-  6     ;; min  0 max 6
-  40    ;; min 40 max 44
-  100     ;; max 452
-  100     ;; 
-  100
-  100
-  100))
+(deftype microtransaction-info (structure)
+  ((num-items int32)
+   (items     microtransaction-item NUM_UNLOCKS :inline)))
 
-;; how much does an item cost
-(define *shop-price-hard* (new 'static 'array int 1
-  6     ;; min  0 max 6
-  9999    ;; min 40 max 44
-  9999     ;; max 452
-  1462     ;; 
-  9999
-  9999
-  9999))
+(define-perm *microtransaction-info* microtransaction-info (new 'global 'microtransaction-info))
 
-(defun get-shop-price ((idx int))
-  (if (-> *pc-settings* shop-hard?)
-    (-> *shop-price-hard* idx)
-    (-> *shop-price* idx)))
+(defun get-microtransaction-item-by-name ((name string))
+  (set! (-> *microtransaction-info* num-items) NUM_UNLOCKS)
+  (dotimes (i (-> *microtransaction-info* num-items))
+    (format #t "Checking item ~d: name is ~a~%" i (-> *microtransaction-info* items i name))
+    (if (string= name (-> *microtransaction-info* items i name)) (return (-> *microtransaction-info* items i))))
+  (the-as microtransaction-item #f))
 
-(defun buy ((idx int))
+(defun set-item-param ((self microtransaction-item) (name string) (task game-task) (price int) (hard-price int) (idx int))
+  (if (> idx NUM_UNLOCKS) (return #f))
+  (set! (-> self name) (new 'global 'string 15 (the-as string #f))) ;; now you can have at most 128 characters of a string, but you are eating away at global memory
+  (format (clear (-> self name)) name)
+  (set! (-> self task) task)
+  (set! (-> self price) price)
+  (set! (-> self hard-price) hard-price)
+  (set! (-> self idx) idx)
+  ;;set active to false as everything will be false on boot
+  (none))
+
+(defun set-up-microtransaction-info ()
+  ;;(set-item-param (-> *microtransaction-info* items 1) "Jump" (game-task training-buzzer) 3 10 1)
+  (set-item-param (-> *microtransaction-info* items 0) "JUMP" (game-task jump-unlocked?) 6 6 0)
+  (set-item-param (-> *microtransaction-info* items 1) "DOUBLE JUMP" (game-task double-jump-unlocked?) 40 9999 1)
+  (set-item-param (-> *microtransaction-info* items 2) "PUNCH" (game-task punch-unlocked?) 100 9999 2)
+  (set-item-param (-> *microtransaction-info* items 3) "SPIN KICK" (game-task spin-kick-unlocked?) 100 1462 3)
+  (set-item-param (-> *microtransaction-info* items 4) "CROUCH" (game-task crouch-unlocked?) 100 9999 4)
+  (set-item-param (-> *microtransaction-info* items 5) "ROLL JUMP" (game-task roll-jump-unlocked?) 100 9999 5)
+  (set-item-param (-> *microtransaction-info* items 6) "JUMP DIVE" (game-task jump-dive-unlocked?) 100 9999 6))
+
+(defun get-shop-price ((item microtransaction-item))
+  (if (-> *pc-settings* shop-hard?) (-> item hard-price) (-> item price)))
+
+(defun buy ((item microtransaction-item))
   "purchase the item"
   (cond
-    ((!= (-> *shop-first-purchase* idx) 1)
-      ;; already purchased
-      (sound-play "cursor-options"))
-    ((>= *shop-count* (get-shop-price idx))
-      ;; have the orbs
-      (sound-play "money-pickup")
-      (-! *shop-count* (get-shop-price idx))
-      (set! (-> *shop-first-purchase* idx) 0))
+    ((task-closed? (-> item task) (task-status need-hint))
+     ;; already purchased
+     (sound-play "cursor-options"))
+    ((>= (-> *game-info* money-per-level 25) (get-shop-price item))
+     ;; have the orbs
+     (sound-play "money-pickup")
+     (-! (-> *game-info* money-per-level 25) (get-shop-price item))
+     (close-specific-task! (-> item task) (task-status need-hint)))
     (else
-      ;; you broke MFer
-      (sound-play "caught-eel"))))
+     ;; you broke MFer
+     (sound-play "caught-eel"))))
 
 ;; DECOMP BEGINS
 
@@ -369,7 +356,7 @@
                ;; if we have all the money in our level, display the all orbs graphic
                (if (= (-> this money-per-level level-idx) (-> (get-game-count level-idx) money-count)) (activate-orb-all level-idx)))))))
      ;; increment our current money count
-     (+! *shop-count* amount)
+     (+! (-> *game-info* money-per-level 25) amount)
      (+! (-> this money) amount))
     (('fuel-cell)
      ;; got a power cell!
