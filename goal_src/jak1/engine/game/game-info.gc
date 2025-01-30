@@ -19,7 +19,7 @@
 ;; The "perm" data is saved to the memory card.
 
 ;; orb count for purposes of the shop
-;;(-> *game-info* money-per-level 25)
+;;(get-spendable-orbs)
 
 (defconstant NUM_UNLOCKS 7)
 
@@ -67,16 +67,27 @@
 (defun get-shop-price ((item microtransaction-item))
   (if (-> *pc-settings* shop-hard?) (-> item hard-price) (-> item price)))
 
+(defun get-spendable-orbs ()
+  (let* ((spent-orbs 0)
+         (total-orbs (-> *game-info* money-total)))
+    (dotimes (i (-> *microtransaction-info* num-items))
+      (let* ((item (-> *microtransaction-info* items i))
+             (task (-> item task))
+             (price (get-shop-price item))
+             (task-status-value (task-status need-hint))
+             (task-closed (task-closed? task task-status-value)))
+        (if task-closed (begin   (set! spent-orbs (+ spent-orbs price))))))
+    (let ((remaining (- total-orbs spent-orbs))) (the int remaining))))
+
 (defun buy ((item microtransaction-item))
   "purchase the item"
   (cond
     ((task-closed? (-> item task) (task-status need-hint))
      ;; already purchased
      (sound-play "cursor-options"))
-    ((>= (-> *game-info* money-per-level 25) (get-shop-price item))
+    ((>= (get-spendable-orbs) (get-shop-price item))
      ;; have the orbs
      (sound-play "money-pickup")
-     (-! (-> *game-info* money-per-level 25) (get-shop-price item))
      (close-specific-task! (-> item task) (task-status need-hint)))
     (else
      ;; you broke MFer
@@ -356,7 +367,6 @@
                ;; if we have all the money in our level, display the all orbs graphic
                (if (= (-> this money-per-level level-idx) (-> (get-game-count level-idx) money-count)) (activate-orb-all level-idx)))))))
      ;; increment our current money count
-     (+! (-> *game-info* money-per-level 25) amount)
      (+! (-> this money) amount))
     (('fuel-cell)
      ;; got a power cell!
