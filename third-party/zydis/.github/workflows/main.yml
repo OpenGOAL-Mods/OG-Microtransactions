@@ -25,13 +25,13 @@ jobs:
           - image_name: windows-2022
             cmake_flags: -DZYAN_NO_LIBC=ON
             skip_tests: yes
-          - image_name: ubuntu-22.04
-          - image_name: ubuntu-22.04
+          - image_name: ubuntu-latest
+          - image_name: ubuntu-latest
             cmake_flags: -DZYAN_NO_LIBC=ON
             skip_tests: yes
 
           # Do a few more specialized configurations.
-          - image_name: ubuntu-22.04
+          - image_name: ubuntu-latest
             cmake_flags: -DZYDIS_MINIMAL_MODE=ON -DZYDIS_FEATURE_ENCODER=OFF
             skip_tests: yes
           - image_name: windows-2022
@@ -74,7 +74,7 @@ jobs:
 
   amalgamated:
     name: Amalgamated build (Ubuntu 22.04)
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -88,7 +88,7 @@ jobs:
           gcc -shared -I. -fPIC -olibzydis.so Zydis.c
 
   fuzzing:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:

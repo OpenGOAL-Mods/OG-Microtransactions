@@ -10,7 +10,7 @@ on:
 jobs:
   build-and-publish-doc:
     name: Build and publish documentation
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
@@ -28,9 +28,9 @@ jobs:
           mv zydoc /usr/local/bin
       - name: Clone Doxygen theme
         run: >-
-          git clone 
+          git clone
           --depth=1 --branch=v2.3.1
-          https://github.com/jothepro/doxygen-awesome-css.git 
+          https://github.com/jothepro/doxygen-awesome-css.git
           /tmp/doxy-theme
       - name: Generate documentation
         run: >-
