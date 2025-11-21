@@ -55,6 +55,7 @@
   (none))
 
 (defun set-up-microtransaction-info ()
+(set! (-> *microtransaction-info* num-items) NUM_UNLOCKS)
   ;;(set-item-param (-> *microtransaction-info* items 1) "Jump" (game-task training-buzzer) 3 10 1)
   (set-item-param (-> *microtransaction-info* items 0) "JUMP" (game-task jump-unlocked?) 6 6 0)
   (set-item-param (-> *microtransaction-info* items 1) "DOUBLE JUMP" (game-task double-jump-unlocked?) 40 9999 1)
